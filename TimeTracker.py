@@ -3,8 +3,8 @@ import csv, os, sys, datetime, keyboard
 import matplotlib.pyplot as plt
 import time as time1
 import datetime as date1
-from datetime import *
-from tkinter import *
+from datetime import datetime
+from tkinter import Label, Button, Menu, Message, Entry, W
 from tkinter import messagebox
 from pandastable import Table
 
