@@ -1,11 +1,9 @@
 import tkinter as tk
-import csv, os, sys, datetime, keyboard
-import matplotlib.pyplot as plt
+import os, sys, datetime, keyboard
 import time as time1
 import datetime as date1
 from datetime import datetime
-from tkinter import Label, Button, Menu, Message, Entry, W
-from tkinter import messagebox
+from tkinter import Label, Button, Menu, Message, Entry, W ,messagebox
 from pandastable import Table
 
 #Set working directory to be script location
@@ -14,7 +12,7 @@ from pandastable import Table
 
 os.chdir(os.path.dirname(sys.argv[0]))
 
-global filepath
+global filepath_recordedtime
 global KeepAwakeSeconds
 global RefreshKA
 global ResetCount
@@ -28,10 +26,16 @@ counter = 66600
 running = False
 tt2=datetime.fromtimestamp(counter)
 
-filepath = "recordedtime.txt"
+filepath_recordedtime = "recordedtime.txt"
+filepath_settings = "settings.config"
 
 HEIGHT = 300
 WIDTH = 500
+
+if not os.path.exists(filepath_settings):
+    with open(filepath_settings, 'w') as file_object:
+            file_object.write("Hours=7.5"+'\n'+"KeepAwake=0")
+            file_object.close()
 
 def counter_label(label): 
     def count(): 
@@ -100,7 +104,7 @@ def Start(label):
 
 
     if RefreshKA == 0:
-        KeepAwake_time = open("Settings.config", "r")
+        KeepAwake_time = open(filepath_settings, "r")
         for x in KeepAwake_time:
             if 'KeepAwake' in x:
                 DefaultKeepAwake2 = x.replace('\n','').replace('KeepAwake=','')
@@ -179,18 +183,15 @@ def TableView():
     canvas = tk.Canvas(Window, height=HEIGHT, width=WIDTH)
 
     class TestApp(tk.Frame):
-        def __init__(self, parent, filepath):
+        def __init__(self, parent, filepath_recordedtime):
             super().__init__(parent)
             self.table = Table(self, showtoolbar=False, showstatusbar=False)
-            self.table.importCSV(filepath)
+            self.table.importCSV(filepath_recordedtime)
             self.table.show()
 
 
-    app = TestApp(canvas, filepath)
+    app = TestApp(canvas, filepath_recordedtime)
     app.pack(fill=tk.BOTH)
-
-    chartbutton = tk.Button(canvas, text="Chart View", bg='White', fg='Black',command=lambda: ChartView())
-    chartbutton.pack()
 
     
     def on_close():
@@ -201,39 +202,6 @@ def TableView():
     Window.protocol("WM_DELETE_WINDOW", on_close)
     canvas.pack()
 
-def ChartView():
-
-    xaxis = []
-    yaxis = []
-
-
-    with open(filepath,'r') as inf:
-        content = csv.reader(inf, delimiter=",")
-        next(content)
-        for row in content:
-            Date = row[0]
-            TotalTime = row[1]
-
-            #if TotalTime == "0:0":
-                #continue
-
-
-            xaxis.append(Date)
-            yaxis.append(TotalTime)
-
-            print(Date+"----"+TotalTime)
-    
-
-    plt.subplots(num="Recorded Times Graph")
-    plt.title("Recorded Times")
-    plt.barh(xaxis, yaxis)
-    plt.xlabel("Time (Hours:Minutes)")
-    plt.ylabel("Date")
-    plt.tight_layout(pad=4)
-    plt.xticks(rotation=45)
-    plt.show()
-
-
 def Settings():
 
     Window = tk.Toplevel()
@@ -243,7 +211,7 @@ def Settings():
 
     global RefreshKA
 
-    Default_time = open("Settings.config", "r")
+    Default_time = open(filepath_settings, "r")
     for x in Default_time:
         if 'Hours' in x:
             DefaultHours = x.replace('\n','').replace('Hours=','')
@@ -283,7 +251,7 @@ def Settings():
             NewKeepAwake = 'KeepAwake='+DefaultKeepAwake
             print("KeeoldpAwake "+NewKeepAwake)
 
-        with open('Settings.config', 'w') as file_object:
+        with open(filepath_settings, 'w') as file_object:
             file_object.write(NewHours+'\n'+NewKeepAwake)
             file_object.close()
         RefreshKA = 0
