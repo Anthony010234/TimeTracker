@@ -136,14 +136,14 @@ def Record():
         DateToday = DateTimeValue.strftime("%d_%m_%Y")
 
         try:
-            file = open("recordedtime.txt", 'r')
+            file = open(filepath_recordedtime, 'r')
             file.close()
         except IOError:
-            with open("recordedtime.txt", 'a') as file_object:
+            with open(filepath_recordedtime, 'a') as file_object:
                 file_object.write("Date (dd_mm_yy),TotalTime(hr:min)"+'\n')
                 file_object.close()
 
-        with open("recordedtime.txt", 'a') as file_object:
+        with open(filepath_recordedtime, 'a') as file_object:
             file_object.write(DateToday+","+label.cget("text")+'\n')
             file_object.close()
 
