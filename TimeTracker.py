@@ -8,7 +8,7 @@ from pandastable import Table
 
 #Set working directory to be script location
 #Built using this command:
-#pyinstaller --noconsole TimeTracker.py --clean -F
+#pyinstaller --noconsole --clean TimeTracker.py
 
 os.chdir(os.path.dirname(sys.argv[0]))
 
